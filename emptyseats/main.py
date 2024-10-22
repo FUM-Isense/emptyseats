@@ -75,6 +75,10 @@ class RealSenseSubscriber(Node):
                 self.get_logger().info(f"Captured frame {self.screenshot_count - capture_counter + 1}")
                 capture_counter -= 1
                 time.sleep(0.4)
+            
+        msg = Bool()
+        msg.data = True
+        self.publisher_.publish(msg)
 
         self.get_logger().info("Capture complete")
         # self.capture_active = False
@@ -115,7 +119,6 @@ class RealSenseSubscriber(Node):
         for img in self.screen_shot_frames[0 + self.count_times: 5 + self.count_times]:
             state = self.detection(self.model, img)
             states.append(state)
-        
         element_counts = Counter(tuple(x) for x in states)
         final_state = max(element_counts, key=element_counts.get)
 
@@ -128,9 +131,6 @@ class RealSenseSubscriber(Node):
         self.get_logger().info(f"Final states: {self.final_states}")
         # self.engine.say(f"{final_state}")
         # self.engine.runAndWait()
-        msg = Bool()
-        msg.data = True
-        self.publisher_.publish(msg)
         self.count_times += self.screenshot_count
 
         # if (self.count_times == 10): self.node_spin = False
